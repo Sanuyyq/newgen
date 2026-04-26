@@ -1,0 +1,43 @@
+{
+  "vless": [
+    {
+      "name": "Builtin Reality DE",
+      "remark": "builtin-reality-de-01",
+      "tags": ["builtin", "free", "reality"],
+      "config": {
+        "address": "example-de.negern.app",
+        "port": 443,
+        "uuid": "00000000-0000-0000-0000-000000000000",
+        "flow": "xtls-rprx-vision",
+        "security": "reality",
+        "sni": "www.microsoft.com",
+        "pbk": "REPLACE_WITH_REALITY_PUBLIC_KEY",
+        "sid": "",
+        "fp": "chrome",
+        "type": "tcp"
+      }
+    }
+  ],
+  "awg": [
+    {
+      "name": "Builtin AWG NL",
+      "remark": "builtin-awg-nl-01",
+      "tags": ["builtin", "premium"],
+      "config": {
+        "privateKey": "REPLACE_WITH_CLIENT_PRIVATE_KEY",
+        "address": "10.8.0.2/32",
+        "dns": ["1.1.1.1"],
+        "jc": 4, "jmin": 40, "jmax": 70,
+        "s1": 50, "s2": 100,
+        "h1": 1, "h2": 2, "h3": 3, "h4": 4,
+        "peer": {
+          "publicKey": "REPLACE_WITH_SERVER_PUBLIC_KEY",
+          "presharedKey": "",
+          "endpoint": "awg.example.com:51820",
+          "allowedIPs": ["0.0.0.0/0"],
+          "persistentKeepalive": 25
+        }
+      }
+    }
+  ]
+}
