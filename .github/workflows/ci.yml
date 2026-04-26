@@ -1,0 +1,71 @@
+name: Build APK + EXE
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  FLUTTER_CHANNEL: stable
+
+jobs:
+  build-apk:
+    name: Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - run: flutter pub get
+      - run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: negern-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
+
+  build-windows:
+    name: Windows EXE
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Generate Windows runner
+        run: flutter create --platforms=windows --project-name negern --org com.negern --description "Negern VPN" .
+
+      - run: flutter pub get
+      - run: flutter build windows --release
+
+      - name: Package Windows build into ZIP
+        shell: pwsh
+        run: |
+          $src = "build\windows\x64\runner\Release"
+          if (-not (Test-Path $src)) { $src = "build\windows\runner\Release" }
+          if (-not (Test-Path $src)) { throw "Release folder not found." }
+          Compress-Archive -Path "$src\*" -DestinationPath "negern-windows.zip" -Force
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: negern-windows-exe
+          path: negern-windows.zip
+          if-no-files-found: error
+          retention-days: 30
